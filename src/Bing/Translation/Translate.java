@@ -71,22 +71,6 @@ public class Translate {
         }
     }
 
-//    public synchronized String[] translateText(String[] textToTranslate, LangCode from, LangCode to) throws Exception {
-//        // under 10000 characters
-//        // under 2000 elements
-//        if (textToTranslate.length > 2000) {
-//            throw new Exception("Array of texts to translate should not exceed 2000 elements.");
-//        }
-//        int charCounter = 0;
-//        for (String s : textToTranslate) {
-//            charCounter += s.toCharArray().length;
-//            if (charCounter > 10000) {
-//                throw new Exception("Sum of all characters of the text to translate should not exceed 10000.");
-//            }
-//        }
-//        return new String[]{""};
-//    }
-
     private synchronized String translateText(URL url) {
         String result = null;
         HttpURLConnection connection = null;
