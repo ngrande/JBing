@@ -1,8 +1,6 @@
 package Bing.Translation;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonStreamParser;
+import org.Json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -28,12 +26,12 @@ public class TokenRequest {
     private String clientID;
     private String clientSecret;
 
-    private JsonObject tokenJsonObject;
+    private JSONObject tokenJsonObject;
     private TokenObject tokenObject;
 
     private String getJsonMember(String name) throws Exception {
         if (tokenJsonObject != null) {
-            return tokenJsonObject.get(name).getAsString();
+            return tokenJsonObject.get(name).toString();
         } else {
             throw new Exception("Call 'requestToken' first.");
         }
@@ -55,7 +53,7 @@ public class TokenRequest {
         return null;
     }
 
-    private synchronized JsonObject executePost(String targetURL, String urlParameters) {
+    private synchronized JSONObject executePost(String targetURL, String urlParameters) {
         URL url;
         HttpURLConnection connection = null;
         try {
@@ -78,16 +76,15 @@ public class TokenRequest {
             //Get Response
             InputStream errorStream = connection.getErrorStream();
             if (errorStream == null) {
-                InputStream inputStream = connection.getInputStream();
-                BufferedReader bufferReader = new BufferedReader(new InputStreamReader(inputStream));
-                JsonStreamParser jsonStreamParser = new JsonStreamParser(bufferReader);
+                JSONObject jsonObject;
+                try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                    String inputStr;
+                    StringBuilder responseStrBuilder = new StringBuilder();
 
-                JsonObject jsonObject = null;
-                if (jsonStreamParser.hasNext()) {
-                    JsonElement element = jsonStreamParser.next();
-                    jsonObject = element.getAsJsonObject();
+                    while ((inputStr = bufferedReader.readLine()) != null)
+                        responseStrBuilder.append(inputStr);
+                    jsonObject = new JSONObject(responseStrBuilder.toString());
                 }
-                bufferReader.close();
 
                 connection.disconnect();
                 return jsonObject;
